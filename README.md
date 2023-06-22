@@ -6,7 +6,8 @@ There are some prerequisites to running, building or deploying this AWS Lambda.
 
 1. Install and configure credentials using AWS CLI: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html
 2. Install AWS SAM CLI: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/using-sam-cli-configure.html
-3. Install dependencies with `npm install` inside the `backend-assignment` folder
+3. Install Node 18: https://nodejs.org/en/download
+4. Install dependencies with `npm install` inside the `backend-assignment` folder
 
 ## Usual scripts
 
