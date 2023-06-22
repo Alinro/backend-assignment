@@ -15,60 +15,60 @@ export type ALLOWED_OPERATION = typeof ALLOWED_OPERATIONS[number];
 
 const isAllowedOperation = (operation: string | undefined): operation is ALLOWED_OPERATION => {
     return !!operation && ALLOWED_OPERATIONS.includes(operation as ALLOWED_OPERATION);
-}
+};
 
 const isValidOperand = (operand: string | undefined): operand is string => {
     return !!operand && !isNaN(+operand);
-}
+};
 
 const performOperation = (operation: ALLOWED_OPERATION, operand1: number, operand2: number): number => {
-    switch(operation) {
+    switch (operation) {
         case 'add':
             return operand1 + operand2;
         case 'subtract':
             return operand1 - operand2;
-        case 'multiply': 
+        case 'multiply':
             return operand1 * operand2; // maybe use BigInt for such operations?
         case 'divide':
             return operand1 / operand2;
     }
-}
+};
 
 export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    const {operation, operand1, operand2} = event.pathParameters || {};
+    const { operation, operand1, operand2 } = event.pathParameters || {};
 
-    if(!isAllowedOperation(operation)) {
+    if (!isAllowedOperation(operation)) {
         return {
             statusCode: 400,
             body: JSON.stringify({
                 message: `Invalid operation: ${operation}`,
             }),
-        }
+        };
     }
 
-    if(!isValidOperand(operand1)) {
+    if (!isValidOperand(operand1)) {
         return {
             statusCode: 400,
             body: JSON.stringify({
                 message: `Invalid first operand: ${operand1}`,
-            })
-        }
+            }),
+        };
     }
 
-    if(!isValidOperand(operand2)) {
+    if (!isValidOperand(operand2)) {
         return {
             statusCode: 400,
             body: JSON.stringify({
                 message: `Invalid second operand: ${operand2}`,
-            })
-        }
+            }),
+        };
     }
 
     try {
         return {
             statusCode: 200,
             body: JSON.stringify({
-                message: performOperation(operation, +operand1, +operand2)
+                message: performOperation(operation, +operand1, +operand2),
             }),
         };
     } catch (err) {

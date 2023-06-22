@@ -58,8 +58,8 @@ describe('tests for app handler', function () {
             pathParameters: {
                 operation: 'add',
                 operand1: '5',
-                operand2: '6'
-            }
+                operand2: '6',
+            },
         };
         const result: APIGatewayProxyResult = await lambdaHandler(event);
 
@@ -76,8 +76,8 @@ describe('tests for app handler', function () {
             pathParameters: {
                 operation: 'subtract',
                 operand1: '14',
-                operand2: '5'
-            }
+                operand2: '5',
+            },
         };
         const result: APIGatewayProxyResult = await lambdaHandler(event);
 
@@ -95,8 +95,8 @@ describe('tests for app handler', function () {
             pathParameters: {
                 operation: 'multiply',
                 operand1: '7',
-                operand2: '5'
-            }
+                operand2: '5',
+            },
         };
         const result: APIGatewayProxyResult = await lambdaHandler(event);
 
@@ -114,8 +114,8 @@ describe('tests for app handler', function () {
             pathParameters: {
                 operation: 'divide',
                 operand1: '42',
-                operand2: '6'
-            }
+                operand2: '6',
+            },
         };
         const result: APIGatewayProxyResult = await lambdaHandler(event);
 
@@ -133,8 +133,8 @@ describe('tests for app handler', function () {
             pathParameters: {
                 operation: 'divid',
                 operand1: '42',
-                operand2: '6'
-            }
+                operand2: '6',
+            },
         };
         const result: APIGatewayProxyResult = await lambdaHandler(event);
 
@@ -152,8 +152,8 @@ describe('tests for app handler', function () {
             pathParameters: {
                 operation: 'divide',
                 operand1: 'a42',
-                operand2: '6'
-            }
+                operand2: '6',
+            },
         };
         const result: APIGatewayProxyResult = await lambdaHandler(event);
 
@@ -171,8 +171,8 @@ describe('tests for app handler', function () {
             pathParameters: {
                 operation: 'divide',
                 operand1: '42',
-                operand2: '6b'
-            }
+                operand2: '6b',
+            },
         };
         const result: APIGatewayProxyResult = await lambdaHandler(event);
 
