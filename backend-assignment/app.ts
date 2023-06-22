@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { APIGatewayProxyEvent, APIGatewayProxyEventPathParameters, APIGatewayProxyResult } from 'aws-lambda';
 
 /**
  *
@@ -34,37 +34,44 @@ const performOperation = (operation: ALLOWED_OPERATION, operand1: number, operan
     }
 };
 
-export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    const { operation, operand1, operand2 } = event.pathParameters || {};
+interface NormalizedPathParameters {
+    operation: ALLOWED_OPERATION,
+    operand1: number,
+    operand2: number
+}
+
+class CustomError extends Error {
+    constructor(message: string) {
+        super(message);
+    }
+}
+
+const normalizePathParameters = (parameters: APIGatewayProxyEventPathParameters | null): NormalizedPathParameters => {
+    const { operation, operand1, operand2 } = parameters || {};
 
     if (!isAllowedOperation(operation)) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({
-                message: `Invalid operation: ${operation}`,
-            }),
-        };
+        throw new CustomError(`Invalid operation: ${operation}`);
     }
 
     if (!isValidOperand(operand1)) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({
-                message: `Invalid first operand: ${operand1}`,
-            }),
-        };
+        throw new CustomError(`Invalid first operand: ${operand1}`);
     }
 
     if (!isValidOperand(operand2)) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({
-                message: `Invalid second operand: ${operand2}`,
-            }),
-        };
+        throw new CustomError(`Invalid second operand: ${operand2}`);
     }
 
+    return {
+        operation,
+        operand1: +operand1,
+        operand2: +operand2
+    };
+}
+
+export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     try {
+        const { operation, operand1, operand2 } = normalizePathParameters(event.pathParameters);
+
         return {
             statusCode: 200,
             body: JSON.stringify({
@@ -72,12 +79,21 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
             }),
         };
     } catch (err) {
-        console.log(err);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({
-                message: 'Server error',
-            }),
-        };
+        if (err instanceof CustomError) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({
+                    message: err.message,
+                }),
+            };
+        } else {
+            return {
+                statusCode: 500,
+                body: JSON.stringify({
+                    message: 'Server error'
+                }),
+            };
+        }
+
     }
 };
