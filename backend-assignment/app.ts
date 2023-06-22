@@ -17,9 +17,9 @@ const isAllowedOperation = (operation: string | undefined): operation is ALLOWED
     return !!operation && ALLOWED_OPERATIONS.includes(operation as ALLOWED_OPERATION);
 }
 
-// const isValidOperand = (operand: string | ): operand is number => {
-//     return true;
-// }
+const isValidOperand = (operand: string | undefined): operand is string => {
+    return !!operand && !isNaN(+operand);
+}
 
 const performOperation = (operation: ALLOWED_OPERATION, operand1: number, operand2: number): number => {
     switch(operation) {
@@ -28,7 +28,7 @@ const performOperation = (operation: ALLOWED_OPERATION, operand1: number, operan
         case 'subtract':
             return operand1 - operand2;
         case 'multiply': 
-            return operand1 * operand2;
+            return operand1 * operand2; // maybe use BigInt for such operations?
         case 'divide':
             return operand1 / operand2;
     }
@@ -41,25 +41,25 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
         return {
             statusCode: 400,
             body: JSON.stringify({
-                message: 'Invalid operation',
+                message: `Invalid operation: ${operation}`,
             }),
         }
     }
 
-    if(!operand1 || isNaN(+operand1)) {
+    if(!isValidOperand(operand1)) {
         return {
             statusCode: 400,
             body: JSON.stringify({
-                message: 'Invalid first operand',
+                message: `Invalid first operand: ${operand1}`,
             })
         }
     }
 
-    if(!operand2 || isNaN(+operand2)) {
+    if(!isValidOperand(operand2)) {
         return {
             statusCode: 400,
             body: JSON.stringify({
-                message: 'Invalid second operand',
+                message: `Invalid second operand: ${operand2}`,
             })
         }
     }
@@ -68,10 +68,6 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
         return {
             statusCode: 200,
             body: JSON.stringify({
-                message: 'hello world',
-                operation,
-                operand1,
-                operand2,
                 result: performOperation(operation, +operand1, +operand2)
             }),
         };
@@ -80,7 +76,7 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
         return {
             statusCode: 500,
             body: JSON.stringify({
-                message: 'some error happened',
+                message: 'Server error',
             }),
         };
     }
