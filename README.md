@@ -33,3 +33,10 @@ For example:
 - `/arithmetic-operation/subtract/1/2`
 - `/arithmetic-operation/multiply/1/2`
 - `/arithmetic-operation/divide/1/2`
+
+## Some things left to do
+
+- replace `hello world` information in `events/event.json`
+- replace the last `hello world` reference in `template.yaml`
+- authentication
+- investigate using `BigInt` for some operations
