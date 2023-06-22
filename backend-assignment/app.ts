@@ -11,11 +11,16 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
  */
 
 export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    const {operation, operand1, operand2} = event.pathParameters || {};
+    
     try {
         return {
             statusCode: 200,
             body: JSON.stringify({
                 message: 'hello world',
+                operation,
+                operand1,
+                operand2
             }),
         };
     } catch (err) {
