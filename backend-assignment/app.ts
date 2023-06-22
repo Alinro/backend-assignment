@@ -10,9 +10,60 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
  *
  */
 
+const ALLOWED_OPERATIONS = ['add', 'subtract', 'multiply', 'divide'] as const;
+export type ALLOWED_OPERATION = typeof ALLOWED_OPERATIONS[number];
+
+const isAllowedOperation = (operation: string | undefined): operation is ALLOWED_OPERATION => {
+    return !!operation && ALLOWED_OPERATIONS.includes(operation as ALLOWED_OPERATION);
+}
+
+// const isValidOperand = (operand: string | ): operand is number => {
+//     return true;
+// }
+
+const performOperation = (operation: ALLOWED_OPERATION, operand1: number, operand2: number): number => {
+    switch(operation) {
+        case 'add':
+            return operand1 + operand2;
+        case 'subtract':
+            return operand1 - operand2;
+        case 'multiply': 
+            return operand1 * operand2;
+        case 'divide':
+            return operand1 / operand2;
+    }
+}
+
 export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const {operation, operand1, operand2} = event.pathParameters || {};
-    
+
+    if(!isAllowedOperation(operation)) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({
+                message: 'Invalid operation',
+            }),
+        }
+    }
+
+    if(!operand1 || isNaN(+operand1)) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({
+                message: 'Invalid first operand',
+            })
+        }
+    }
+
+    if(!operand2 || isNaN(+operand2)) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({
+                message: 'Invalid second operand',
+            })
+        }
+    }
+
     try {
         return {
             statusCode: 200,
@@ -20,7 +71,8 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
                 message: 'hello world',
                 operation,
                 operand1,
-                operand2
+                operand2,
+                result: performOperation(operation, +operand1, +operand2)
             }),
         };
     } catch (err) {
