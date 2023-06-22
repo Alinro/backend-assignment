@@ -1,2 +1,3 @@
 .aws-sam
 backend-assignment/node_modules
+backend-assignment/coverage
